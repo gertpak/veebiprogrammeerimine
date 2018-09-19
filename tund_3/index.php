@@ -2,10 +2,13 @@
 	//echo "Siin on minu esimene PHP!";
 	$name = "Gertin";
 	$surname = "Pakkonen";
-	$todayDate = date("d.m.Y");
+	$todayDate = date("d. ");
+	$todayYear = date(" Y");
 	$weekDayNow = date ("N");
 	//echo $weekDayNow;
 	$weekDayNamesEST = ["esmaspäev", "teisipäev", "kolmapäev", "neljapäev", "reede", "laupäev", "pühapäev"]; 
+    $monthDayNow = date ("n");
+	$mounthNamesEST = ["jaanuar", "veebruar", "märts", "aprill", "mai", "juuni", "juuli", "august", "september", "oktoober", "november", "detsember"]; 
 	//var_dump ($weekDayNamesEST);
 	//echo $weekDayNamesEST[0];
 	$hourNow = date ("H");
@@ -41,10 +44,9 @@
 <body>
 	<h1><?php echo $name . " " . $surname; ?></h1>
 	<p>Siin on minu <a href="http://tlu.ee/" target="_blank">TLÜ</a> õppetöö raames valminud veebilehed. Need ei oma mingit sügavat sisu ja nende kopeerimine ei oma mõtet.</p>
-	<p>Kodutöö on ilusti tehtud</p>
 	  
 	
-	<?php echo "<p>Täna on ". $weekDayNamesEST[$weekDayNow - 1]." ning kuupäev on ". $todayDate. "</p>\n";
+	<?php echo "<p>Täna on ". $weekDayNamesEST[$weekDayNow - 1]." ning kuupäev on ". $todayDate. $mounthNamesEST[$monthDayNow - 1]. $todayYear.".</p>\n";
 		echo "<p>Lehe avamise hetkel oli kell ". date("H:i") . ", käes on ". $partOfDay. ".</p>\n";?>
 	<img src="../../../~rinde/veebiprogrammeerimine2018s/tlu_terra_600x400_1.jpg" alt="TLÜ Terra õppehoone">  
 	<p>Mu kõrval istub <a href="../../../~sandhan/veebiprogrammeerimine/tund_3" target="_blank">Sander</a>.</p>

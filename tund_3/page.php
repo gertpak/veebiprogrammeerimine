@@ -40,11 +40,30 @@
 		<label for= "birthYear">Sünniaasta: </label>
 		<input name = "birthYear" type = "number" min = "1924" max = "2003" value = "1996">
 	
+		
+		<label for="sunnikuu">Sünnikuu: </label>
+		<select id="sunnikuu" name="sunnikuu">
+			<option value="jaanuar">jaanuar</option>
+			<option value="veebruar">veebruar</option>
+			<option value="marts">märts</option>
+			<option value="aprill">aprill</option>
+			<option value="mai">mai</option>
+			<option value="juuni">juuni</option>
+			<option value="juuli">juuli</option>
+			<option value="august">august</option>
+			<option selected = "selected" value="september">september</option>
+			<option value="oktoober">oktoober</option>
+			<option value="november">november</option>
+			<option value="detsember">detsember</option>
+		</select>
+			
 		<label for="eriala">Eriala: </label>
 		<select id="eriala" name="eriala">
 			<option value="informaatika">informaatika</option>
 			<option value="infoteadus">infoteadus</option>
 			<option value="matemaatika">matemaatika</option>
+		</select><br>
+			
 		</select><br>
 		
 		<input name = "submitUserData" type="submit" value="Saada andmed">
@@ -54,6 +73,7 @@
 	<?php 
 		if (isset($_POST["firstName"]))
 		{
+			echo "<br>Olete sündinud ". $_POST["sunnikuu"]." ". $_POST["birthYear"].". aastal.";
 			echo "<br><p>Olete elanud järgnevatel aastatel:</p>";
 			echo "<ul> \n";
 			for ($i = $_POST["birthYear"]; $i <= date("Y"); $i ++)
