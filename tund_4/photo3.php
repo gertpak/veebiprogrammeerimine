@@ -7,7 +7,7 @@
 	$picNum = mt_rand(2, 43);//random
 	$picURL = "http://www.cs.tlu.ee/~rinde/media/fotod/TLU_600x400/tlu_";
 	$picEXT = ".jpg";
-	$picFileName = $dirToRead .mt_rand(2, $i); .$picEXT;
+	//$picFileName = $dirToRead .mt_rand(1, $i) .$picEXT;
 	
 	
 	
@@ -29,8 +29,10 @@
 	<h1><?php echo $name . " " . $surname; ?></h1>
 	<p>Siin on minu <a href="http://tlu.ee/" target="_blank">TLÜ</a> õppetöö raames valminud veebilehed. Need ei oma mingit sügavat sisu ja nende kopeerimine ei oma mõtet.</p>
 	<?php
-	for ($i = 0; $i < count ($allFiles); $i ++){ 
-	echo <img src="<?php echo $picFileName1;?>" alt="juhuslik pilt TLÜ'st">}
+		for ($i = 0; $i < count ($allFiles); $i ++)
+		{ 
+			echo <img src="$dirToRead .mt_rand(1, $i) .$picEXT" alt="juhuslik pilt TLÜ'st">;
+		}
 	?>
 	<!--<img src="<?php echo $picFileName;?>" alt="juhuslik pilt TLÜ'st"></br>
 	<img src="<?php echo $dirToRead .$allFiles[1];?>" alt="juhuslik pilt TLÜ'st"></br>-->
