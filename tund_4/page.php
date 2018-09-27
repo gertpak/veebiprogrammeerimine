@@ -1,4 +1,6 @@
 <?php 
+
+    require("functions.php");
 	$name = "Tundmatu";
 	$surname = "inimene";
 	$eriala = "teadmata";
@@ -17,12 +19,6 @@
 	if (isset($_POST["eriala"])) {	
 		$eriala = $_POST["eriala"];}
 		
-	function test_input($data) {
-		echo "koristan!\n";
-		$data = trim($data);
-		$data = stripslashes($data);
-		$data = htmlspecialchars($data);
-	return $data;}
 	
 	function fullName() {
 		$GLOBALS["fullName"] = $GLOBALS["name"]. " " .$GLOBALS["surname"];}
