@@ -91,21 +91,31 @@ function readCatmessages(){
 function signup($name, $surname, $email, $gender, $birthDate, $password) {
     $notice = "";
     $mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
-    $stmt = $mysqli->prepare("INSERT INTO vpusers (firstname, lastname, birthdate, gender, email, password) VALUES (?,?,?,?,?,?)");
-    echo $mysqli -> error;
-    //krüpteerin parooli, kasutades juhuslikku soolamisfraasi(salting string)
-    $options = [
+    $stmt = $mysqli->prepare("SELECT id FROM vpusers WHERE email=?");
+    echo $mysqli->error;
+    $stmt->bind_result($emailss);
+    $stmt->execute();
+    if ($stmt->fetch()) {
+    	echo "\n Persses!";
+    } else {
+    	$stmt = $mysqli->prepare("INSERT INTO vpusers (firstname, lastname, birthdate, gender, email, password) VALUES (?,?,?,?,?,?)");
+    	echo $mysqli -> error;
+    	//krüpteerin parooli, kasutades juhuslikku soolamisfraasi(salting string)
+    	$options = [
         "cost" => 12,
         "salt" => substr(sha1(rand()), 0, 22)
-    ];
-    $pwdhash = password_hash($password, PASSWORD_BCRYPT, $options);
-    $stmt->bind_param("sssiss", $name, $surname, $email, $gender, $birthDate, $pwdhash);
-    if($stmt->execute()) {
-        $notice = "OK";
-    } else {
-        $notice = "error". $stmt->error;
+    	];
+    	$pwdhash = password_hash($password, PASSWORD_BCRYPT, $options);
+		echo "Kuupäev: ".$birthDate;
+    	$stmt->bind_param("sssiss", $name, $surname, $birthDate, $gender, $email, $pwdhash);
+    	if($stmt->execute()) {
+        	$notice = "OK";
+    	} else {
+        	$notice = "error". $stmt->error;
+    	}
+
     }
-    $stmt->close();
+	$stmt->close();
 	$mysqli->close();
 	return $notice;
     

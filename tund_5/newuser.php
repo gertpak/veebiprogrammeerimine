@@ -5,6 +5,8 @@
 	$name = "";
 	$surname = "";
     $email = "";
+    $password = "";
+    $confirmPassword = "";
     $gender = "";
 	$birthMonth = null;
     $birthDay = null;
@@ -49,19 +51,32 @@ if (isset($_POST["submitUserData"]))
     if (isset($_POST["email"]) and !empty($_POST["email"])) {
 		$email = test_input($_POST["email"]);
     } else {
-        $emailError = " Palun sisestage korrektne e-mail.";
+        $emailError = " Palun sisestage korrektne e-mail!";
     }
     
     if(isset($_POST["birthDay"])) {
         $birthDay = $_POST["birthDay"];
+    } else {
+        $birthDayError = " Palun sisestage päev!";
     }
     
     if(isset($_POST["birthMonth"])) {
         $birthMonth = $_POST["birthMonth"];
+    } else {
+        $birthMonthError = " Palun sisestage kuu!";
     }
     
     if(isset($_POST["birthYear"])) {
         $birthYear = $_POST["birthYear"];
+    } else {
+        $birthYearError = " Palun sisestage aasta!";
+    }
+    if (isset($_POST["password"]) and !empty($_POST["password"]) and strlen($_POST["password"]) >= 8 and isset($_POST["password2"]) and !empty($_POST["password2"]) and strlen($_POST["password2"]) >= 8 and $_POST["password"] == $_POST["password2"]) {
+        $password = test_input($_POST["password"]);
+        $confirmPassword = test_input($_POST["password2"]);
+
+    } else {
+        $passwordError = " Parooliga tekkis viga. Kontrollige, et kas sisestasite vähemalt 8 tähemärki pika parooli ning mõlemad paroolid on samad. Proovige uuesti.";
     }
     
     //Kontrollin kuupäeva õigsust
@@ -76,11 +91,9 @@ if (isset($_POST["submitUserData"]))
         }
     }
     if(empty($nameError) and empty($surnameError) and empty($birthMonthError) and empty($birthYearError) and empty($birthDayError) and empty($genderError) and empty($emailError) and empty ($passwordError)){
-        $notice = signup($name, $surname, $email, $gender, $birthDate, $_POST["password"]);
-        echo $notice;
-        
+        $notice = signup($name, $surname, $email, $gender, $birthDate, $password);
+        echo $notice;      
     }
-    
     
 }//Nupu vajutuse lõpp
 	
@@ -152,13 +165,16 @@ if (isset($_POST["submitUserData"]))
 			echo ">" .$i ."</option> \n";
 		}
 		echo "</select> \n";
-	  ?>
+	   echo $birthDayError . $birthMonthError . $birthYearError;
+      ?>
         <br><br>
         <label for="email">E-mail (kasutajatunnus): </label><br>
         <input name = "email" type="email" value="<?php echo $email; ?>"><span><?php echo $emailError; ?></span>
         <br>
         <label for="password">Salasõna: </label><br>
-        <input name = "password" type="text"><span><?php echo $passwordError; ?></span><br>
+        <input name = "password" type="password"><br>
+        <label for="password2">Korda salasõna: </label><br>
+        <input name = "password2" type="password"><span><?php echo $passwordError; ?></span><br>
         
 			
 		</select><br>
