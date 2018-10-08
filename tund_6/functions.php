@@ -1,9 +1,9 @@
 <?php
 require("../../../config.php");
-//echo $GLOBALS["serverHost"];
-//echo $GLOBALS["serverUsername"];
-//echo $GLOBALS["serverPassword"];
 $database = "if18_gertin_pa_1";
+
+//alustan sessiooni
+session_start();
 
 function test_input($data) {
     //echo "koristan!\n";
@@ -87,6 +87,46 @@ function readCatmessages(){
 
 //--------------------------------- Logimissüsteemi loomine -----------------------------------------------------
 
+function signin($email, $password) {
+	$notice = "";
+    $mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);	
+	$stmt = $mysqli->prepare("SELECT id, firstname, lastname, password FROM vpusers WHERE email=?");
+	echo $mysqli->error;
+    $stmt->bind_param("s", $email);
+	$stmt->bind_result($idFromDb, $firstnameFromDb, $lastnameFromDb, $passwordFromDb);
+	if($stmt->execute()) {
+		//kui päring õnnestus
+		
+		if($stmt->fetch()) {
+			//kasutaja on olemas
+			
+			if(password_verify($password, $passwordFromDb)) {
+				//kui salasõna klapib
+				$notice = "Logisite sisse!";
+				//määran sessiooni muutujad
+				$_SESSION["userID"] = $idFromDb;
+				$_SESSION["userFirstName"] = $firstnameFromDb;
+				$_SESSION["userLastName"] = $lastnameFromDb;
+				$_SESSION["userEmail"] = $email;
+				//liigume kohe sisselogitule mõeldud pealehele
+				$stmt->close();
+				$mysqli->close();
+				header("Location: main.php");
+				exit();
+			} else {
+				$notice = "Vale salasõna!";
+			}
+		} else {
+			$notice = "Sellist kasutajat (" .$email .") ei leitud!"; 
+		}
+	} else {
+		$notice = "Sisselogimisel tekkis tehniline viga!" .$stmt->error;
+	}
+	
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+} //sisselogimine lõppeb
 
 function signup($name, $surname, $email, $gender, $birthDate, $password) {
     $notice = "";
@@ -121,4 +161,37 @@ function signup($name, $surname, $email, $gender, $birthDate, $password) {
 	return $notice;
     
 }
+
+//---------------------------------- Valideerimata sõnumite regamine-----------------------------------
+
+function readallunvalidatedmessages(){
+	$notice = "<ul> \n";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("SELECT id, message FROM vpamsg WHERE valid IS NULL ORDER BY id DESC");
+	echo $mysqli->error;
+	$stmt->bind_result($id, $msg);
+	$stmt->execute();
+	
+	while($stmt->fetch()){
+		$notice .= "<li>" .$msg .'<br><a href="validatemessage.php?id=' .$id .'">Valideeri</a>' ."</li> \n";
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
+  
+  function readmsgforvalidation($editId){
+	$notice = "";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("SELECT message FROM vpamsg WHERE id = ?");
+	$stmt->bind_param("i", $editId);
+	$stmt->bind_result($msg);
+	$stmt->execute();
+	if($stmt->fetch()){
+		$notice = $msg;
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+  }
 ?>
