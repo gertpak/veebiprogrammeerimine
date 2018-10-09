@@ -12,6 +12,7 @@
 	  header("Location: index.php");
 	  exit();
   }
+  $notice = allusers();
   
 ?>
 
@@ -26,10 +27,9 @@
 	<p>See leht on valminud <a href="http://www.tlu.ee" target="_blank">TLÜ</a> õppetöö raames ja ei oma mingisugust, mõtestatud või muul moel väärtuslikku sisu.</p>
 	<hr>
 	<p>Olete sisse loginud nimega: <?php echo $_SESSION["userFirstName"] ." " .$_SESSION["userLastName"]; ?>. <b><a href = "?logout=1">Logi välja!</a></b></p>
-	<ul>
-	  <li>Valideeri anonüümseid <a href = "validatemsg.php">sõnumeid</a></li>
-	  <li>Vaata veel veebisaidi <a href = "users.php">kasutajaid</a></li>
-	</ul>
+	<hr>
+	  <?php echo $notice; ?>
+
 	
   </body>
 </html>

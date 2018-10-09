@@ -12,7 +12,7 @@
   <h1>Sõnumid</h1>
   <p>Siin on minu <a href="http://www.tlu.ee">TLÜ</a> õppetöö raames valminud veebilehed. Need ei oma mingit sügavat sisu ja nende kopeerimine ei oma mõtet.</p>
   <hr>
-  
+  <p>Kasutajate loend:</p>
   <?php echo $notice; ?>
 
 </body>

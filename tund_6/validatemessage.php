@@ -17,6 +17,10 @@
   if(isset($_GET["id"])) {
 	  $msg = readmsgforvalidation($_GET["id"]);
   }
+  if(isset($_POST["submitValidation"])){
+	 $notice = validatemsg($_POST["id"],$_POST["validation"]);
+	 //header("Location: validatemsg.php");
+  }
   
 ?>
 <!DOCTYPE html>

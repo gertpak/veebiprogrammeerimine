@@ -194,4 +194,56 @@ function readallunvalidatedmessages(){
 	$mysqli->close();
 	return $notice;
   }
+  
+ function validatemsg($idFroms, $validation){
+	$notice = "";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("UPDATE vpamsg SET validator=?, valid=?, validated=now() WHERE id=?");
+	echo $mysqli->error;
+	$stmt->bind_param("iii",$_SESSION["userID"],$validation,$idFroms);
+	if($stmt->execute()) {
+        $notice = "OK";
+
+    } else {
+        $notice = "error". $stmt->error;
+    }
+    
+	$stmt->close();
+	$mysqli->close();
+	header("Location: validatemsg.php");
+	$notice = "Teie otsus on arvesse läinud, märge on salvestatud.";
+	return $notice;
+ }
+function allvalidmessages() {
+	$notice = "";
+	$vaartus = 1;
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+	$stmt = $mysqli->prepare("SELECT message FROM vpamsg WHERE valid=? ORDER BY validated DESC");
+	echo $mysqli->error;
+	$stmt->bind_param("i",$vaartus);
+		$stmt->bind_result($msg);
+	$stmt->execute();
+	while($stmt->fetch()){
+		$notice .= "<li>" .$msg ."</li> \n";
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+
+}
+function allusers() {
+	$notice = "";
+	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
+		$stmt = $mysqli->prepare("SELECT firstname, lastname, email FROM vpusers WHERE id != ".$_SESSION['userID']."");
+	echo $mysqli->error;
+	//$stmt->bind_param("i",$id);
+	$stmt->bind_result($firstname,$lastname,$email);
+	$stmt->execute();
+	while($stmt->fetch()) {
+			$notice .= "<li>Nimi:" .$firstname ." ".$lastname .", email: ".$email ."</li> \n";
+	}
+	$stmt->close();
+	$mysqli->close();
+	return $notice;
+}
 ?>
