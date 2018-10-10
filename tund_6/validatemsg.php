@@ -26,13 +26,10 @@
   <h1>Sõnumid</h1>
   <p>Siin on minu <a href="http://www.tlu.ee">TLÜ</a> õppetöö raames valminud veebilehed. Need ei oma mingit sügavat sisu ja nende kopeerimine ei oma mõtet.</p>
   <hr>
-  <ul>
-
-  </ul>
+  <h2>Valideerimata sõnumid:</h2>
+	<p><?php echo $notice; ?></p>
   <hr>
-  
-  <?php echo $notice; ?>
-
+  <p><a href="main.php">Tagasi</a> avalehele!</p>
 </body>
 
 </html>

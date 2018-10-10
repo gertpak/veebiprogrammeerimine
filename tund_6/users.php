@@ -28,8 +28,9 @@
 	<hr>
 	<p>Olete sisse loginud nimega: <?php echo $_SESSION["userFirstName"] ." " .$_SESSION["userLastName"]; ?>. <b><a href = "?logout=1">Logi välja!</a></b></p>
 	<hr>
-	  <?php echo $notice; ?>
-
-	
+	<h2>Kasutajad sellel saidil:</h2>
+	 <p> <?php echo $notice; ?></p>
+	<hr>
+	<p><a href="main.php">Tagasi</a> avalehele!</p>
   </body>
 </html>

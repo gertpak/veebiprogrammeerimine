@@ -221,7 +221,7 @@ function allvalidmessages() {
 	$stmt = $mysqli->prepare("SELECT message FROM vpamsg WHERE valid=? ORDER BY validated DESC");
 	echo $mysqli->error;
 	$stmt->bind_param("i",$vaartus);
-		$stmt->bind_result($msg);
+	$stmt->bind_result($msg);
 	$stmt->execute();
 	while($stmt->fetch()){
 		$notice .= "<li>" .$msg ."</li> \n";
@@ -231,6 +231,9 @@ function allvalidmessages() {
 	return $notice;
 
 }
+
+//---------------------------------------------Kasutajate liides --------------------------------------------------
+
 function allusers() {
 	$notice = "";
 	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
