@@ -14,8 +14,8 @@
 	  exit();
 	}
 	$mydescription = "Pole midagi lisatud";
-	$mybgcolor = "#FFFFFF";
-	$mytxtcolor = "#000000";
+	$mybgcolor = $_SESSION["bgColor"];
+	$mytxtcolor = $_SESSION["txtColor"];
 	
 	if(isset($_POST["submitInfo"])){ 
 		$notice = saveUserData($_POST["description"],$_POST["bgcolor"],$_POST["txtcolor"]);
@@ -25,11 +25,13 @@
 	} else {
 		$userDatas = loadUserData();
 		//var_dump($userDatas);
-		if($userDatas["desc"] != ""){
-			$mydescription = $userDatas["desc"];
+		if($userDatas != "error") {
+			if($userDatas["desc"] != ""){
+				$mydescription = $userDatas["desc"];
+			}
+			$mybgcolor = $userDatas["bgcol"];
+			$mytxtcolor = $userDatas["txtcol"];
 		}
-		$mybgcolor = $userDatas["bgcol"];
-		$mytxtcolor = $userDatas["txtcol"];
 	}
 	
 	
@@ -61,7 +63,7 @@
 	<p> <?php echo $notice; ?>
 	</p>
 	<hr>
-	<p><a href="index.php">Tagasi</a> avalehele!</p>
+	<p><a href="main.php">Tagasi</a> avalehele! </br><b><a href = "?logout=1">Logi välja!</a></b></p>
 </body>
 
 </html>

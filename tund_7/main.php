@@ -12,6 +12,8 @@
 	  header("Location: index.php");
 	  exit();
   }
+  	$mybgcolor = $_SESSION["bgColor"];
+	$mytxtcolor = $_SESSION["txtColor"];
   
 ?>
 
@@ -20,6 +22,10 @@
   <head>
     <meta charset="utf-8">
 	<title>Pealeht</title>
+	<style>
+		body{background-color: <?php echo $mybgcolor; ?>; 
+		color: <?php echo $mytxtcolor; ?>} 
+	</style>
   </head>
   <body>
     <h1>Pealeht</h1>

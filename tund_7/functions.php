@@ -95,7 +95,7 @@ function signin($email, $password) {
 	$stmt->bind_result($idFromDb, $firstnameFromDb, $lastnameFromDb, $passwordFromDb);
 	if($stmt->execute()) {
 		//kui päring õnnestus
-		
+		$stmt->store_result();
 		if($stmt->fetch()) {
 			//kasutaja on olemas
 			
@@ -107,7 +107,22 @@ function signin($email, $password) {
 				$_SESSION["userFirstName"] = $firstnameFromDb;
 				$_SESSION["userLastName"] = $lastnameFromDb;
 				$_SESSION["userEmail"] = $email;
+				$stmt2 = $mysqli->prepare("SELECT bgcolor, txtcolor FROM vpuserprofiles WHERE userid = ?");
+				echo $mysqli->error;
+				$stmt2->bind_param("i", $_SESSION["userID"]);
+				$stmt2->bind_result($bgcolFromDb, $txtcolFromDb);
+				$stmt2->execute();
+				if($stmt2->fetch()){
+					$_SESSION["bgColor"] = $bgcolFromDb;
+					$_SESSION["txtColor"] = $txtcolFromDb;
+				}
+				else {
+					$_SESSION["bgColor"] = "#FFFFFF";
+					$_SESSION["txtColor"] = "#000000";
+				}
+
 				//liigume kohe sisselogitule mõeldud pealehele
+				$stmt2->close();
 				$stmt->close();
 				$mysqli->close();
 				header("Location: main.php");
@@ -305,6 +320,8 @@ function saveUserData($description,$bgcolor,$txtcolor) {
 		$stmt->bind_param("sssi", $description, $bgcolor, $txtcolor, $_SESSION["userID"]);
 		if($stmt->execute()){
 			$notice = "Profiil uuendatud!";
+			$_SESSION["bgColor"] = $bgcolor;
+			$_SESSION["bgColor"] = $txtcolor;
 		} else {
 			$notice = "Profiili uuendamisel tekkis viga! " .$stmt->error;
 		}
@@ -315,6 +332,8 @@ function saveUserData($description,$bgcolor,$txtcolor) {
 		$stmt->bind_param("isss", $_SESSION["userID"], $description, $bgcolor, $txtcolor);
 		if($stmt->execute()){
 			$notice = "Profiil uuendatud!";
+			$_SESSION["bgColor"] = $bgcolor;
+			$_SESSION["bgColor"] = $txtcolor;
 		} else {
 			$notice = "Profiili uuendamisel tekkis viga! " .$stmt->error;
 		}

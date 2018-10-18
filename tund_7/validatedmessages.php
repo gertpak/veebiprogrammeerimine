@@ -13,7 +13,8 @@
 	  header("Location: index.php");
 	  exit();
   }
-  
+  $mybgcolor = $_SESSION["bgColor"];
+  $mytxtcolor = $_SESSION["txtColor"];
   $messagesbyuser = readallvalidatedmessagesbyuser();
 ?>
 <!DOCTYPE html>
@@ -21,6 +22,10 @@
 <head>
   <meta charset="utf-8">
   <title>Valideeritud anonüümsed sõnumid</title>
+  <style>
+    body{background-color: <?php echo $mybgcolor; ?>; 
+    color: <?php echo $mytxtcolor; ?>} 
+  </style>
 </head>
 <body>
   <h1>Valideeritud sõnumid valideerijate kaupa</h1>

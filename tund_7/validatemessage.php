@@ -22,6 +22,8 @@
 	$notice = validatemsg($_POST["id"],$_POST["validation"]);
 	 //header("Location: validatemsg.php");
   }
+  $mybgcolor = $_SESSION["bgColor"];
+  $mytxtcolor = $_SESSION["txtColor"];
   
 ?>
 <!DOCTYPE html>
@@ -29,6 +31,10 @@
 <head>
   <meta charset="utf-8">
   <title>Anonüümsed sõnumid</title>
+  <style>
+    body{background-color: <?php echo $mybgcolor; ?>; 
+    color: <?php echo $mytxtcolor; ?>} 
+  </style>
 </head>
 <body>
   <h1>Sõnumid</h1>
