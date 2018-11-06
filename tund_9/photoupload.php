@@ -25,7 +25,8 @@
 		//ajatempel
 		$timeStamp = microtime(1) * 10000;
 		//$target_file = $target_dir .basename($_FILES["fileToUpload"]["name"]) ."_" .$timeStamp ."." .$imageFileType;
-		$target_file = $target_dir ."vp_" .$timeStamp ."." .$imageFileType;
+		$target_file_name = "vp_" .$timeStamp ."." .$imageFileType;
+		$target_file = $target_dir . $target_file_name;
 		
 		//$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
 		
@@ -82,10 +83,27 @@
 			$newWidth = round($imageWidth / $sizeRatio);
 			$newHeight = round($imageHeight / $sizeRatio);	
 			$myImage = resizeImage($myTempImage, $imageWidth, $imageHeight, $newWidth, $newHeight);
+			
+			//Lisame vesimärgi
+			$waterMark = imagecreatefrompng("../vp_picfiles/vp_logo_color_w100_overlay.png");
+			$waterMarkWidth = imagesx($waterMark);
+			$waterMarkHeight = imagesy($waterMark);
+			$waterMarkPosX = $newWidth - $waterMarkWidth - 10;
+			$waterMarkPosY = $newHeight - $waterMarkWidth - 10;
+			//kopeerin midagi
+			imagecopy($myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			
+			//lisame teksti
+			$textToImage = $_SESSION["userFirstName"] ." ". $_SESSION["userLastName"];
+			$textColor = imagecolorallocatealpha($myImage, 255, 255, 255, 60);
+			imagettftext($myImage, 20, 0, 10, 25, $textColor, "../vp_picfiles/ARIALBD.TTF", $textToImage);
+			
 			//muudetud suurusega pilt kujutatakse pildifailiks
 			if($imageFileType == "jpg" or $imageFileType == "jpeg") {
 				if(imagejpeg($myImage, $target_file, 90)) {
 					$noticeForm = " Korras! ";
+					//kui pilt salvestati, siis lisame andmebaasi:
+					addPhotoData($target_file_name, $_POST["altText"], $_POST["privacy"]);
 				} else {
 					$noticeForm = " Pahasti! ";
 				}
@@ -93,6 +111,7 @@
 			if($imageFileType == "png") {
 				if(imagepng($myImage, $target_file, 6)) {
 					$noticeForm = " Korras! ";
+					addPhotoData($target_file_name, $_POST["altText"], $_POST["privacy"]);
 				} else {
 					$noticeForm = " Pahasti! ";
 				}
@@ -100,6 +119,7 @@
 			if($imageFileType == "gif") {
 				if(imagegif($myImage, $target_file)) {
 					$noticeForm = " Korras! ";
+					addPhotoData($target_file_name, $_POST["altText"], $_POST["privacy"]);
 				} else {
 					$noticeForm = " Pahasti! ";
 				}
@@ -137,6 +157,8 @@
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">
     <label>Vali üleslaetav pilt:</label>
     <input type="file" name="fileToUpload" id="fileToUpload"><br>
+	<label>Kirjeldus: </label><input type="text" name = "altText"><br>
+	<label>Privaatsus: </label><br><input type="radio" name = "privacy" value="1"><label>Avalik</label>&nbsp; <input type="radio" name = "privacy" value="2"><label>Sisseloginud kasutajatele</label>&nbsp; <input type="radio" name = "privacy" value="3" checked><label>Isiklik</label><br> 
     <input type="submit" value="Lae pilt üles" name="submitPic"><span><?php echo $noticeForm; ?></span><br>
 </form>
 	
