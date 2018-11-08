@@ -15,113 +15,97 @@
 	}
 	$noticeForm = " ";
 	$mydescription = "Pole midagi lisatud, lisa siia enda kirjeldus.";
-	$target_dir = "../userprofileuploads/";
+	$target_dir = "../vpuser_picfiles/";
 	$uploadOk = 1;
+	$target_file = "";
+	$imageFileType = "";
 	if(isset($_POST["submitInfo"])){ 
 		$notice = saveUserData($_POST["description"],$_POST["bgcolor"],$_POST["txtcolor"]);
-		$mydescription = $_POST["description"];
+		if(!empty($_POST["description"])){
+	  		$mydescription = $_POST["description"];
+		}
 		$mybgcolor = $_POST["bgcolor"];
 		$mytxtcolor = $_POST["txtcolor"];
 		if(!empty($_FILES["fileToUpload"]["name"])){
 		
-			$imageFileType = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION));
-			//ajatempel
+			$imageFileType = strtolower(pathinfo($_FILES["fileToUpload"]["name"], PATHINFO_EXTENSION));
 			$timeStamp = microtime(1) * 10000;
-			//$target_file = $target_dir .basename($_FILES["fileToUpload"]["name"]) ."_" .$timeStamp ."." .$imageFileType;
-			$target_file_name = "vp_" .$timeStamp ."." .$imageFileType;
-			$target_file = $target_dir . $target_file_name;
-			
-			//$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-			
-			// Kas on pilt
+			$target_file_name = "vpuser_" .$timeStamp ."." .$imageFileType;
+			$target_file = $target_dir .$target_file_name;
+						
+			// kas on pilt, kontrollin pildi suuruse küsimise kaudu
 			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
 			if($check !== false) {
-				$noticeForm = " Fail on pilt - " . $check["mime"] . ". ";
+				//echo "Fail on pilt - " . $check["mime"] . ".";
 				$uploadOk = 1;
 			} else {
-				$noticeForm = " Fail ei ole pilt. ";
+				$noticeForm = "Fail ei ole pilt.";
 				$uploadOk = 0;
 			}
-		
-			// Kas file on olemas00
-			if (file_exists($target_file)) {
-				$noticeForm = " Kahjuks on selline pilt juba olemas. ";
-				$uploadOk = 0;
-			}
-			// Faili suurus
+			
+			// faili suurus
 			if ($_FILES["fileToUpload"]["size"] > 2500000) {
-				$noticeForm = " Kahjuks on fail liiga suur. ";
+				$noticeForm = "Kahjuks on fail liiga suur!";
 				$uploadOk = 0;
 			}
-			// Saab muuta lubatud formaate
+			
+			// kindlad failitüübid
 			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
 			&& $imageFileType != "gif" ) {
-				$noticeForm = " Kahjuks on lubatud vaid JPG, JPEG, PNG ja GIF failid. ";
+				$noticeForm = "Kahjuks on lubatud vaid JPG, JPEG, PNG ja GIF failid!";
 				$uploadOk = 0;
 			}
-			// Kui $uploadOk on muudetud 0'iks mõne errori poolt
+			
+			// kui on tekkinud viga
 			if ($uploadOk == 0) {
-				$noticeForm = " Kahjuks seda faili ei laetud üles. ";
-			// Kui kõik korras, laeme üles
+				$noticeForm = "Vabandame, faili ei laetud üles!";
+			// kui kõik korras, laeme üles
 			} else {
-				//sõltuvalt faili tüübist, loome pildiobjektid
-				if($imageFileType == "jpg" or $imageFileType == "jpeg") {
+				//sõltuvalt failitüübist, loome pildiobjekti
+				if($imageFileType == "jpg" or $imageFileType == "jpeg"){
 					$myTempImage = imagecreatefromjpeg($_FILES["fileToUpload"]["tmp_name"]);
 				}
-				if($imageFileType == "png") {
+				if($imageFileType == "png"){
 					$myTempImage = imagecreatefrompng($_FILES["fileToUpload"]["tmp_name"]);
 				}
-				if($imageFileType == "gif") {
+				if($imageFileType == "gif"){
 					$myTempImage = imagecreatefromgif($_FILES["fileToUpload"]["tmp_name"]);
 				}
+				
 				//vaatame pildi originaalsuuruse
 				$imageWidth = imagesx($myTempImage);
 				$imageHeight = imagesy($myTempImage);
-				//leian vajalikud suurendusfaktori
-				if($imageWidth > $imageHeight) {
-					$sizeRatio = $imageWidth / 600;
+				//leian vajaliku suurendusfaktori, siin arvestan, et lõikan ruuduks!!!
+				if($imageWidth > $imageHeight){
+					$sizeRatio = $imageHeight / 300;//ruuduks lõikamisel jagan vastupidi
 				} else {
-					$sizeRatio = $imageHeight / 400;
+					$sizeRatio = $imageWidth / 300;
 				}
-				$newWidth = round($imageWidth / $sizeRatio);
-				$newHeight = round($imageHeight / $sizeRatio);	
-				$myImage = resizeImage($myTempImage, $imageWidth, $imageHeight, $newWidth, $newHeight);
 				
-				//muudetud suurusega pilt kujutatakse pildifailiks
-				if($imageFileType == "jpg" or $imageFileType == "jpeg") {
-					if(imagejpeg($myImage, $target_file, 90)) {
-						$noticeForm = " Korras! ";
-						//kui pilt salvestati, siis lisame andmebaasi:
-						addUserPhotoData($target_file_name);
-					} else {
-						$noticeForm = " Pahasti!ssss";
-					}
+				$newWidth = round($imageWidth / $sizeRatio);
+				$newHeight = $newWidth;
+				$myImage = resizeImagetoSquare($myTempImage, $imageWidth, $imageHeight, $newWidth, $newHeight);
+				
+				//muudetud suurusega pilt kirjutatakse pildifailiks
+				if($imageFileType == "jpg" or $imageFileType == "jpeg"){
+				  if(imagejpeg($myImage, $target_file, 90)){
+                    $noticeForm = "Korras!";
+                    $myFileName = $target_file_name;
+					addUserPhotoData($target_file_name);
+				  } else {
+					$noticeForm = "Pahasti!";
+				  }
 				}
-				if($imageFileType == "png") {
-					if(imagepng($myImage, $target_file, 6)) {
-						$noticeForm = " Korras!";
-						addUserPhotoData($target_file_name);
-					} else {
-						$noticeForm = " Pahasti!";
-					}
-				}
-				if($imageFileType == "gif") {
-					if(imagegif($myImage, $target_file)) {
-						$noticeForm = " Korras!";
-						addUserPhotoData($target_file_name);
-					} else {
-						$noticeForm = " Pahasti!";
-					}
-				}
+				
 				imagedestroy($myTempImage);
 				imagedestroy($myImage);
+				//imagedestroy($waterMark);
+				
 			}
-		}
-		else {
-			$noticeForm = " Lisa palun fail, taun! ";
 		}
 	} else {
 		$userDatas = loadUserData();
+		$userPicInfo = loadUserPic();
 		//var_dump($userDatas);
 		if($userDatas != "error") {
 			if($userDatas["desc"] != ""){
@@ -130,12 +114,32 @@
 			$mybgcolor = $userDatas["bgcol"];
 			$mytxtcolor = $userDatas["txtcol"];
 		}
+		$userPicInfo = loadUserPic();
+		if($userPicInfo != "error") {
+			$myFileName = $userPicInfo["file"];
+			$myAltText = $userPicInfo["alttext"];
+		}
+		else {
+			$myFileName = "vp_user_generic.png";
+			$myAltText = "Kasutaja pole pilti veel laadinud.";
+		}
 	}
-	function resizeImage($image, $ow, $oh, $w, $h) {
-		$newImage = imagecreatetruecolor($w,$h);
-		imagecopyresampled($newImage, $image, 0, 0, 0, 0, $w, $h, $ow, $oh);
+	function resizeImageToSquare($image, $ow, $oh, $w, $h){
+		$newImage = imagecreatetruecolor($w, $h);
+		if($ow > $oh){
+			$cropX = round(($ow - $oh) / 2);
+			$cropY = 0;
+			$cropSize = $oh;
+		} else {
+			$cropX = 0;
+			$cropY = round(($oh - $ow) / 2);
+			$cropSize = $ow;
+		}
+    	//imagecopyresampled($newImage, $image, 0, 0 , 0, 0, $w, $h, $ow, $oh);
+		imagecopyresampled($newImage, $image, 0, 0, $cropX, $cropY, $w, $h, $cropSize, $cropSize); 
 		return $newImage;
-	}
+ 	}
+ 	$profilePic = $target_dir . $myFileName;
 	$pageTitle = "Kasutajaprofiil";
 	
 	require("header.php");
@@ -145,6 +149,9 @@
 
 	<p>Siin on minu <a href="http://tlu.ee/" target="_blank">TLÜ</a> õppetöö raames valminud veebilehed. Need ei oma mingit sügavat sisu ja nende kopeerimine ei oma mõtet.</p>
 	<hr>
+	<div style="float: right">
+	<img src="<?php echo $profilePic; ?>" alt="<?php echo $myAltText ?>">	  
+	</div>  
 	<form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>" method="post" enctype="multipart/form-data">
 	<textarea rows="10" cols="80" name="description"><?php echo $mydescription; ?></textarea><br>
 	<label>Minu valitud taustavärv: </label>
@@ -156,8 +163,7 @@
 	<input name = "submitInfo" type="submit" value="Kinnita andmed">
 	</form>
 	<br>
-	<p> <?php echo $noticeForm; ?>
-	</p>
+	<p> <?php echo $noticeForm; ?></p>
 	<hr>
 	<p><a href="main.php">Tagasi</a> avalehele! </br><b><a href = "?logout=1">Logi välja!</a></b></p>
 </body>
