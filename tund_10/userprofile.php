@@ -102,6 +102,16 @@
 				//imagedestroy($waterMark);
 				
 			}
+		}else {
+			$userPicInfo = loadUserPic();
+			if($userPicInfo != "error" and $userPicInfo != "") {
+				$myFileName = $userPicInfo["file"];
+				$myAltText = $userPicInfo["alttext"];
+			}
+			else {
+				$myFileName = "vp_user_generic.png";
+				$myAltText = "Kasutaja pole pilti veel laadinud.";
+			}
 		}
 	} else {
 		$userDatas = loadUserData();
@@ -115,7 +125,7 @@
 			$mytxtcolor = $userDatas["txtcol"];
 		}
 		$userPicInfo = loadUserPic();
-		if($userPicInfo != "error" and !empty($userPicInfo)) {
+		if($userPicInfo != "error" and $userPicInfo != "") {
 			$myFileName = $userPicInfo["file"];
 			$myAltText = $userPicInfo["alttext"];
 		}
@@ -160,9 +170,9 @@
 	<input name="txtcolor" type="color" value="<?php echo $mytxtcolor; ?>"><br>
 	<label>Kasutaja foto:</label>
     <input type="file" name="fileToUpload" id="fileToUpload"><br>
-	<input name = "submitInfo" type="submit" value="Kinnita andmed">
+	<input name = "submitInfo" type="submit" value="Kinnita andmed"><br>
 	</form>
-	<br>
+	<br><br>
 	<p> <?php echo $noticeForm; ?></p>
 	<hr>
 	<p><a href="main.php">Tagasi</a> avalehele! </br><b><a href = "?logout=1">Logi välja!</a></b></p>
