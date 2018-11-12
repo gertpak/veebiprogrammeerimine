@@ -50,17 +50,39 @@
 			return $newImage;
 		}
 		
-		public function addWatermark() {
+		public function addWatermark($pos) {
 			$waterMark = imagecreatefrompng("../vp_picfiles/vp_logo_color_w100_overlay.png");
 			$waterMarkWidth = imagesx($waterMark);
 			$waterMarkHeight = imagesy($waterMark);
-			$waterMarkPosX = imagesx($this->myImage) - $waterMarkWidth - 10;
-			$waterMarkPosY = imagesy($this->myImage) - $waterMarkWidth - 10;
-			imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			if($pos == "ld") {	//left down
+				$waterMarkPosX = imagesx($this->myImage) - $waterMarkWidth - 10;
+				$waterMarkPosY = imagesy($this->myImage) - $waterMarkWidth - 10;
+				imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			}
+			if($pos == "rd") {	//right down
+				$waterMarkPosX = 10;
+				$waterMarkPosY = imagesy($this->myImage) - $waterMarkWidth - 10;
+				imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			}
+			if($pos == "c") {	//center
+				$waterMarkPosX = (imagesx($this->myImage) - $waterMarkWidth) / 2 ;
+				$waterMarkPosY = (imagesy($this->myImage) - $waterMarkWidth) / 2;
+				imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			}
+			if($pos == "lu") {	//left up
+				$waterMarkPosX = imagesx($this->myImage) - $waterMarkWidth - 10;
+				$waterMarkPosY = 10;
+				imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			}
+			if($pos == "ru") {	//right up
+				$waterMarkPosX = 10;
+				$waterMarkPosY = 10;
+				imagecopy($this->myImage, $waterMark, $waterMarkPosX, $waterMarkPosY, 0, 0, $waterMarkWidth, $waterMarkHeight);
+			}
 		}
 		
-		public function addText(){
-			$textToImage = $_SESSION["userFirstName"] ." ". $_SESSION["userLastName"];
+		public function addText($txt){
+			$textToImage = $txt;
 			$textColor = imagecolorallocatealpha($this->myImage, 255, 255, 255, 60);
 			imagettftext($this->myImage, 20, 0, 10, 25, $textColor, "../vp_picfiles/ARIALBD.TTF", $textToImage);
 		}
@@ -89,6 +111,29 @@
 				}
 			}
 			return $notice;
+		}
+		public function checkIfPicture($targetFile, $size) {
+			$uploadOk = 1;
+			$check = getimagesize($this->tempName);
+			if($check !== false) {
+				$uploadOk = 1;
+			} else {
+				$uploadOk = 0;
+			}
+			if (file_exists($targetFile)) {
+				//$noticeForm = " Kahjuks on selline pilt juba olemas. ";
+				$uploadOk = 0;
+			}
+			if ($size > 2500000) {
+				//$noticeForm = " Kahjuks on fail liiga suur. ";
+				$uploadOk = 0;
+			}
+			if($this->imageFileType != "jpg" && $this->imageFileType != "png" && $this->imageFileType != "jpeg"
+			&& $this->imageFileType != "gif" ) {
+				//$noticeForm = " Kahjuks on lubatud vaid JPG, JPEG, PNG ja GIF failid. ";
+				$uploadOk = 0;
+			}
+			return $uploadOk;
 		}
 	}
 		

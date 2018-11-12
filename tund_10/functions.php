@@ -380,40 +380,6 @@ function addPhotoData($fileName, $altText, $privacy) {
 	$mysqli->close();
 	return $notice;
 }
-/*function addUserPhotoData($fileName) {
-	$notice = "";
-	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
-    $stmt = $mysqli->prepare("SELECT filename FROM vpprofilepicture WHERE userid=?");
-	echo $mysqli->error;
-	$stmt->bind_param("i", $_SESSION["userID"]);
-	$stmt->bind_result($fileNameFromDB);
-	$stmt->execute();
-	$altTextS = $_SESSION["userFirstName"] ." ". $_SESSION["userLastName"];
-if($stmt->fetch()){
-		$stmt->close();
-		$stmt = $mysqli->prepare("UPDATE vpprofilepicture SET filename=?, alttext=? WHERE userid=?");
-		echo $mysqli->error;
-		$stmt->bind_param("ssi", $fileName, $altTextS, $_SESSION["userID"]);
-		if($stmt->execute()){
-			$notice = "Profiil uuendatud!";
-		} else {
-			$notice = "Profiili uuendamisel tekkis viga! " .$stmt->error;
-		}
-	} else {
-	$stmt->close();
-	$stmt = $mysqli->prepare("INSERT INTO vpprofilepicture (userid, filename, alttext) VALUES(?,?,?)");
-	echo $mysqli->error;
-	$stmt->bind_param("iss", $_SESSION["userID"], $fileName, $altTextS);
-	if($stmt->execute()){
-		$notice = "Profiil uuendatud!";
-	} else {
-		$notice = "Profiili uuendamisel tekkis viga! " .$stmt->error;
-	}
-	$stmt->close();
-	$mysqli->close();
-	return $notice;
-	
-}*/
 function addUserPhotoData($fileName) {
 	$notice = "";
 	$altTextS = $_SESSION["userFirstName"] ." ". $_SESSION["userLastName"];

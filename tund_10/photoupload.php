@@ -17,56 +17,22 @@
 	}
 	//Pildi üleslaadimise osa
 	$target_dir = "../picuploads/";
-	$uploadOk = 1;
-	if(isset($_POST["submitPic"])) {	//Kas vajutati submit nuppu
-		//kas failinimi ka olemas on
+	$ifSuccess = 1;
+	if(isset($_POST["submitPic"])) {
 		if(!empty($_FILES["fileToUpload"]["name"])) {
-			//var_dump($_FILES);
-			//$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 			$imageFileType = strtolower(pathinfo(basename($_FILES["fileToUpload"]["name"]),PATHINFO_EXTENSION));
-			//ajatempel
 			$timeStamp = microtime(1) * 10000;
-			//$target_file = $target_dir .basename($_FILES["fileToUpload"]["name"]) ."_" .$timeStamp ."." .$imageFileType;
 			$target_file_name = "vp_" .$timeStamp ."." .$imageFileType;
 			$target_file = $target_dir . $target_file_name;
-			
-			//$imageFileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
-			
-			// Kas on pilt
-			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
-			if($check !== false) {
-				$noticeForm = " Fail on pilt - " . $check["mime"] . ". ";
-				$uploadOk = 1;
-			} else {
-				$noticeForm = " Fail ei ole pilt. ";
-				$uploadOk = 0;
-			}
 		
-			// Kas file on olemas
-			if (file_exists($target_file)) {
-				$noticeForm = " Kahjuks on selline pilt juba olemas. ";
-				$uploadOk = 0;
-			}
-			// Faili suurus
-			if ($_FILES["fileToUpload"]["size"] > 2500000) {
-				$noticeForm = " Kahjuks on fail liiga suur. ";
-				$uploadOk = 0;
-			}
-			// Saab muuta lubatud formaate
-			if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
-			&& $imageFileType != "gif" ) {
-				$noticeForm = " Kahjuks on lubatud vaid JPG, JPEG, PNG ja GIF failid. ";
-				$uploadOk = 0;
-			}
-			// Kui $uploadOk on muudetud 0'iks mõne errori poolt
-			if ($uploadOk == 0) {
-				$noticeForm = " Kahjuks seda faili ei laetud üles. ";
-			// Kui kõik korras, laeme üles
+			$myPhoto = new Photoupload($_FILES["fileToUpload"]["tmp_name"], $imageFileType);
+			$ifSuccess = $myPhoto->checkIfPicture($target_file, $_FILES["fileToUpload"]["size"]);
+			if ($ifSuccess == 0) {
+				$noticeForm = " Kahjuks tekkis kuskil mingi viga. Kontrollige oma faili formaati ja suurust!";
 			} else {
-				$myPhoto = new Photoupload($_FILES["fileToUpload"]["tmp_name"], $imageFileType);
 				$myPhoto->resizeImage(600, 400);
-				$myPhoto->addWatermark();
-				$myPhoto->addText();
+				$myPhoto->addWatermark("ld"); //ld - left down, rd - right down, c - center, lu - left up, ru - right up
+				$myPhoto->addText($_SESSION["userFirstName"] ." ". $_SESSION["userLastName"]);
 				$saveResult = $myPhoto->savePhoto($target_file);
 				if($saveResult == 1) {
 					$noticeForm = " Üleslaadimine läks edukalt!";
@@ -74,18 +40,12 @@
 				} else {
 					$noticeForm = " Kuskil läks midagi pahasti, proovi palun uuesti!";
 				}
-				unset($myPhoto);
 			}
+			unset($myPhoto);
 		} else {
 			$noticeForm = " Lisa palun fail, taun! ";
 		}
 	}//Kas on nuppu vajutatud
-  //Lehe päise üleslaadimise osa
-	function resizeImage($image, $ow, $oh, $w, $h) {
-		$newImage = imagecreatetruecolor($w,$h);
-		imagecopyresampled($newImage, $image, 0, 0, 0, 0, $w, $h, $ow, $oh);
-		return $newImage;
-	}
 	$pageTitle = "Fotode üleslaadimine";
   
 	require("header.php");
