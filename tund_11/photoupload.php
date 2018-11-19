@@ -31,32 +31,32 @@
 			
 			$uploadOk = $myPhoto->checkForImage();
 			if($uploadOk == 1){
-			  $uploadOk = $myPhoto->checkForFileType();
+				$uploadOk = $myPhoto->checkForFileType();
 			}
-			
+
 			if($uploadOk == 1){
-			  $uploadOk = $myPhoto->checkForFileSize($_FILES["fileToUpload"], 2500000);
+				$uploadOk = $myPhoto->checkForFileSize($_FILES["fileToUpload"], 2500000);
 			}
-			
+
 			if($uploadOk == 1){
-			  $uploadOk = $myPhoto->checkIfExists($target_file);
+				$uploadOk = $myPhoto->checkIfExists($target_file);
 			}
-						
+					
 			if ($uploadOk == 0) {
 				$noticeForm = "Vabandame, faili ei laetud üles! Tekkisid vead: ".$myPhoto->errorsForUpload;
 			} else {
-				
 				$myPhoto->resizeImage(600, 400);
-				$myPhoto->addWatermark($pathToWatermark, "c");
+				$myPhoto->addWatermark($pathToWatermark, "ld");
 				//$myPhoto->addText($_SESSION["userFirstName"] ." ". $_SESSION["userLastName"]);
 				$myPhoto->addText("Pildil puudub kuupäev");
 				$saveResult = $myPhoto->savePhoto($target_file);
 				if($saveResult == 1){
-                  $noticeForm = " Üleslaadimine läks edukalt! ";
-				  $noticeForm .= addPhotoData($myPhoto->fileName, $_POST["altText"], $_POST["privacy"]);
+					$myPhoto->createThumbnail("../thumbuploads/",200);
+					$noticeForm = " Üleslaadimine läks edukalt! ";
+					$noticeForm .= addPhotoData($myPhoto->fileName, $_POST["altText"], $_POST["privacy"]);
 				} else {
-                  $noticeForm .= "Foto lisamisel andmebaasi tekkis viga! ";
-                }
+					$noticeForm .= "Foto lisamisel andmebaasi tekkis viga! ";
+				}
 				
 			}
 			unset($myPhoto);

@@ -149,10 +149,34 @@
 		}
 	}
 	
+	public function createThumbnail($directory, $size) {
+		$imageWidth = imagesx($this->myTempImage);
+		$imageHeight = imagesy($this->myTempImage);
+		if($imageWidth > $imageHeight) {
+			$cutSize = $imageHeight;
+			$cutX = round(($imageWidth - $cutSize) / 2);
+			$cutY = 0;
+		} else {
+			$cutSize = $imageWidth;
+			$cutY = round(($imageHeight - $cutSize) / 2);
+			$cutX = 0;
+		}
+		$myThumbnail = imagecreatetruecolor($size, $size);
+		$targetFile = $directory . $this->fileName;
+		imagecopyresampled($myThumbnail, $this->myTempImage, 0, 0, $cutX, $cutY, $size, $size, $cutSize, $cutSize);
+		if($this->imageFileType == "jpg" or $this->imageFileType == "jpeg"){
+			imagejpeg($myThumbnail, $targetFile, 90);
+		}
+		if($this->imageFileType == "png"){
+			imagepng($myThumbnail, $targetFile, 6);
+		}
+		if($this->imageFileType == "gif"){
+			imagegif($myThumbnail, $targetFile);
+		}	
+	}
+	
 	public function readExif() {
 		@$exif = exif_read_data($this->tempName, "ANY_TAG", 0, true);
-		//var_dump($exif);
-		//var_dump($exif);
 		if(!empty($exif["DateTimeOriginal"])) {
 			$this->photoDate = $exif["DateTimeOriginal"];
 		} else {
@@ -186,6 +210,21 @@
 		}
 		return $notice;
 	}
+	public function resizesImageToSquare($image, $ow, $oh, $w, $h){
+		$newImage = imagecreatetruecolor($w, $h);
+		if($ow > $oh){
+			$cropX = round(($ow - $oh) / 2);
+			$cropY = 0;
+			$cropSize = $oh;
+		} else {
+			$cropX = 0;
+			$cropY = round(($oh - $ow) / 2);
+			$cropSize = $ow;
+		}
+    	//imagecopyresampled($newImage, $image, 0, 0 , 0, 0, $w, $h, $ow, $oh);
+		imagecopyresampled($newImage, $image, 0, 0, $cropX, $cropY, $w, $h, $cropSize, $cropSize); 
+		return $newImage;
+ 	}
 	
   
   }//class lõppeb
