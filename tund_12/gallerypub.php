@@ -25,6 +25,7 @@
 	//$publicThumbnails = readAllPublicPictureThumbs();
 	$publicThumbnails = readAllPublicPictureThumbsPage($page, $limit);
 	$pageTitle = "Pildigalerii";
+	$scripts = '<link rel="stylesheet" type="text/css" href="style/modal.css">' ."\n" .'<script type="text/javascript" src="javascript/modal.js" defer></script>' ."\n";
 
 	require("header.php");
 ?>
@@ -34,7 +35,14 @@
 	<hr>
 	<p>Olete sisse loginud nimega: <?php echo $_SESSION["userFirstName"] ." " .$_SESSION["userLastName"]; ?>. <b><a href = "?logout=1">Logi välja!</a></b></p>
 	<hr>
-	<h2>Pildid:</h2>
+	<!-- The Modal W3Schools eeskujul-->
+	<div id="myModal" class="modal">
+		<span class="close">&times;</span>
+		<img class="modal-content" id="modalImg">
+		<div id="caption"></div>
+	</div>
+	<div id = "gallery">
+	<h2><?php echo $pageTitle; ?></h2>
 	 <?php
 		echo "<p>";
 		if ($page > 1){
@@ -50,6 +58,7 @@
 		echo "</p> \n";
 		echo $publicThumbnails;
 	?>
+	</div>
 	<hr>
 	<p><a href="main.php">Tagasi</a> avalehele! </br><b><a href = "?logout=1">Logi välja!</a></b></p>
   </body>

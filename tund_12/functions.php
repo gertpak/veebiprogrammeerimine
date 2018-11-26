@@ -465,18 +465,18 @@ function latestPicture($privacy) {
 function readAllPublicPictureThumbsPage($page,$limit) {
 	$v22rtus = 2;
 	$skip = ($page - 1) * $limit;
-	$html = "<p>Pole pilti, mida näidata!</p>";
+	$html = "";
 	$mysqli = new mysqli($GLOBALS["serverHost"], $GLOBALS["serverUsername"], $GLOBALS["serverPassword"], $GLOBALS["database"]);
 	$stmt = $mysqli->prepare("SELECT filename, alttext FROM vpphotos WHERE privacy<=? AND deleted IS NULL LIMIT ?,?");
 	echo $mysqli->error;
 	$stmt->bind_param("iii",$v22rtus,$skip,$limit);
 	$stmt->bind_result($filenameFromDB, $alttextFromDB);
 	$stmt->execute();
-	if($stmt->fetch()){	
-		$html = '<img src="'. $GLOBALS["thumbDir"] .$filenameFromDB .'" alt="'.$alttextFromDB .'">';
-	}
 	while($stmt->fetch()){
-		$html .= '<img src="'. $GLOBALS["thumbDir"] .$filenameFromDB .'" alt="'.$alttextFromDB .'">';
+		$html .= '<img src="'. $GLOBALS["thumbDir"] .$filenameFromDB .'" alt="'.$alttextFromDB .'" data-fn="' . $filenameFromDB.'">' ."\n";
+	}
+	if(empty($html)) {
+		$html = "<p>Pole midagi kahjuks näidata.</p>";
 	}
 	$stmt->close();
 	$mysqli->close();
