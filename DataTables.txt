@@ -9,3 +9,6 @@ CREATE TABLE `if18_gertin_pa_1`.`vpphotos` ( `id` INT(11) NOT NULL AUTO_INCREMEN
 
 
 CREATE TABLE `if18_braian_ju_1`.`vpprofilepicture` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `userid` INT(11) NOT NULL , `filename` VARCHAR(50) NOT NULL , `alttext` VARCHAR(100) NULL , `date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `if18_gertin_pa_1`.`vpphotoratings` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `photoid` INT(11) NOT NULL , `userid` INT(11) NOT NULL , `rating` INT(1) NOT NULL , `added` DATE NOT NULL DEFAULT CURRENT_TIMESTAMP , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
