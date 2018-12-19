@@ -1,0 +1,1 @@
+CREATE TABLE `if18_gertin_pa_1`.`vpeksam` ( `id` INT(11) NOT NULL AUTO_INCREMENT , `name` VARCHAR(30) NOT NULL , `plantType` VARCHAR(40) NOT NULL , `place` VARCHAR(40) NOT NULL , `date` DATETIME NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
